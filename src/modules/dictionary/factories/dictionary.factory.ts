@@ -14,7 +14,7 @@ export const dictionaryFactory = async (overrides = {}) => {
 export const createDictionaries = async (count: number, overrides = {}) => {
     const dictionaries = [];
     for (let i = 0; i < count; i++) {
-        dictionaries.push(await dictionaryFactory(overrides));
+        dictionaries.push(await dictionaryFactory(overrides))
     }
     return dictionaries;
 };

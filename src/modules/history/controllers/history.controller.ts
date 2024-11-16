@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import {
   create,
   findAll
-} from "../services/dictionary.service"
-import { DictionaryPaginationQuery, SimpleIPaginationQuery } from "@/utils/interfaces";
+} from "../services/history.service"
+import { SimpleIPaginationQuery } from "@/utils/interfaces";
 
 export default {
     async create(req: Request, res: Response) {
@@ -11,13 +11,13 @@ export default {
             const result = await create(req.body)
             res.status(201).json({
                 data: result,
-                message: "Success create dictionary",
+                message: "Success create history",
             });
         } catch (error) {
             const err = error as Error;
             res.status(500).json({
                 data: err.message,
-                message: "Failed create dictionary",
+                message: "Failed create history",
             });
         }
     },
@@ -26,19 +26,18 @@ export default {
             const {
                 limit = 12,
                 page = 1,
-                dictionary_type
-            } = req.query as unknown as DictionaryPaginationQuery
+            } = req.query as unknown as SimpleIPaginationQuery
 
-            const result = await findAll(limit,page,dictionary_type)
+            const result = await findAll(limit,page)
             res.status(200).json({
                 data: result,
-                message: "Success get all dictionary",
+                message: "Success get all history",
             });
         } catch (error) {
             const err = error as Error;
             res.status(500).json({
                 data: err.message,
-                message: "Failed get all dictionary",
+                message: "Failed get all history",
             });
         }
     },
