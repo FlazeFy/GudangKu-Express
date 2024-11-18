@@ -35,13 +35,8 @@ const reminderSchema = new Schema<Reminder>(
             required: true,
             default: Date.now,
         },
-        created_by: {
-            type: String,
-            required: true,
-        },
         updated_at: {
             type: Date,
-            required: true,
             default: Date.now,
         }
     },

@@ -89,13 +89,8 @@ const inventorySchema = new Schema<Inventory>(
             required: true,
             default: Date.now,
         },
-        created_by: {
-            type: String,
-            required: true,
-        },
         updated_at: {
             type: Date,
-            required: true,
             default: Date.now,
         },
         deleted_at: {
