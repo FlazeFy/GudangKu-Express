@@ -3,7 +3,7 @@ import mongoose, { Types } from "mongoose";
 const Schema = mongoose.Schema
 export interface Reminder {
     _id?: Types.ObjectId
-    inventory_id: string
+    inventory_id: Types.ObjectId
     reminder_desc: string
     reminder_type: string
     reminder_context: string
@@ -15,8 +15,8 @@ export interface Reminder {
 const reminderSchema = new Schema<Reminder>(
     {
         inventory_id: {
-            type: String,
-            required: true,
+            type: Schema.Types.ObjectId,
+            ref: "Inventories",
         },
         reminder_desc: {
             type: String,
@@ -38,7 +38,7 @@ const reminderSchema = new Schema<Reminder>(
         updated_at: {
             type: Date,
             default: Date.now,
-        }
+        },
     },
     {
         timestamps: {

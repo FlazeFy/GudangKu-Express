@@ -18,3 +18,12 @@ export const findExisting = async (inventory_id: string, reminder_type: string, 
     })
     return res
 };
+
+export const findByInventoryId = async (user_id:string, id:string): Promise<Reminder[]> => {
+    const res = await ReminderModel.find({
+            // created_by: user_id,
+            inventory_id: id
+        })
+        
+    return res
+}

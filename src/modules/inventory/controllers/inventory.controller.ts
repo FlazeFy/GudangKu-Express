@@ -4,8 +4,12 @@ import {
   findContextTotalStats,
   findInventoryCalendar,
   findInventoryContext,
-  findInventoryList
+  findInventoryList,
+  findOneDetail
 } from "../services/inventory.service"
+import {
+    findByInventoryId
+} from "../../reminder/services/reminder.service"
 
 export default {
     async create(req: Request, res: Response) {
@@ -125,6 +129,27 @@ export default {
             res.status(result ? 200 : 404).json({
                 data: result,
                 message: "Success get all inventory room",
+            });
+        } catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: "something wrong. please contact admin"
+            })   
+        }
+    },
+    async getInventoryDetail(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            let result_reminder = null
+            const result = await findOneDetail('',id)
+
+            if(result){
+                result_reminder = await findByInventoryId('',id)
+            }
+            res.status(result ? 200 : 404).json({
+                data: result,
+                reminder: result_reminder == null || result_reminder.length == 0 ? null : result_reminder,
+                message: "Success get inventory",
             });
         } catch (error) {
             res.status(500).json({

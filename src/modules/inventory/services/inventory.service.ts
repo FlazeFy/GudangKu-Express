@@ -61,3 +61,12 @@ export const findInventoryContext = async (context: string, user_id:string): Pro
     ])
     return res
 }
+
+export const findOneDetail = async (user_id:string, id:string): Promise<Inventory | null> => {
+    const res = await InventoryModel.findOne({
+            // created_by: user_id,
+            _id: id
+        })
+        
+    return res
+}

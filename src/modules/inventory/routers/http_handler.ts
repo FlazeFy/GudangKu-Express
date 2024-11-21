@@ -11,6 +11,7 @@ prefixRouter.get('/total_by_room/:type', controller.getTotalInventoryRoomStats)
 prefixRouter.get('/total_by_merk/:type', controller.getTotalInventoryMerkStats)
 prefixRouter.get('/calendar', controller.getCalendarInventory)
 prefixRouter.get('/list', controller.getListInventory)
+prefixRouter.get('/detail/:id', controller.getInventoryDetail)
 prefixRouter.get('/room', controller.getInventoryRoom)
 router.use(module_prefix, prefixRouter)
 
