@@ -11,5 +11,5 @@ export const res_message_template = {
     hard_delete_fail: "failed to permanently delete",
     unknown_err: "something wrong. please contact admin",
     conflict: "has been used. try another",
-    invalid: "please provide invalid"
+    invalid: "please provide valid"
 };
