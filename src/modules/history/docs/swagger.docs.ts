@@ -1,17 +1,17 @@
 /**
  * @swagger
  * tags:
- *   name: Dictionary
- *   description: For dictionary or rules used in inventory, report, or reminder
+ *   name: History
+ *   description: Activity of user using the apps (others API)
  */
 
 /**
  * @swagger
- * /api/v2/dictionary:
+ * /api/v2/history:
  *   get:
- *     summary: Get dictionary by type
- *     description: This request is used to get dictionary by type. Can be multiple dictionary type if separate using `,`. This request is using MongoDB database
- *     tags: [Dictionary]
+ *     summary: Get history by type
+ *     description: This request is used to get history by type. Can be multiple history type if separate using `,`. This request is using MongoDB database
+ *     tags: [history]
  *     parameters:
  *       - name: page
  *         in: query
@@ -21,16 +21,9 @@
  *           minimum: 1
  *         description: The page number for pagination
  *         example: 1
- *       - name: dictionary_type
- *         in: query
- *         required: false
- *         schema:
- *           type: string
- *         description: Filter by dictionary type
- *         example: inventory_category
  *     responses:
  *       200:
- *         description: Dictionaries fetched successfully
+ *         description: Histories fetched successfully
  *         content:
  *           application/json:
  *             examples:
@@ -39,19 +32,21 @@
  *                 value:
  *                   status: success
  *                   data:
- *                     - dictionary_type: inventory_category
- *                       dictionary_name: Checkout
- *                   message: dictionaries found
+ *                     - id: 6737f3c4e7312c8667334a3c
+ *                       history_type: Create Item
+ *                       history_context: Skincare
+ *                       created_at: 2024-11-16T01:22:12.242Z
+ *                   message: Histories found
  *       404:
- *         description: Dictionaries not found
+ *         description: Histories not found
  *         content:
  *           application/json:
  *             examples:
  *               not-found:
- *                 summary: No dictionaries found
+ *                 summary: No Histories found
  *                 value:
  *                   status: failed
- *                   message: no dictionaries found
+ *                   message: no Histories found
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -66,11 +61,11 @@
 
 /**
  * @swagger
- * /api/v2/dictionary:
+ * /api/v2/history:
  *   post:
- *     summary: Post dictionary
- *     description: Create a new dictionary using given name and category. This request is using MongoDB database
- *     tags: [Dictionary]
+ *     summary: Post history
+ *     description: Create a new history using given name and category. This request is using MongoDB database
+ *     tags: [history]
  *     requestBody:
  *       required: true
  *       content:
@@ -78,18 +73,18 @@
  *           schema:
  *             type: object
  *             properties:
- *               dictionary_name:
+ *               history_type:
  *                 type: string
- *                 example: Fashion
- *               dictionary_type:
+ *                 example: Add Item
+ *               history_context:
  *                 type: string
- *                 example: inventory_category
+ *                 example: Skincare
  *           example:
- *             dictionary_name: Fashion
- *             dictionary_type: inventory_category
+ *             history_type: Add Item
+ *             history_context: Skincare
  *     responses:
  *       200:
- *         description: Dictionary created successfully
+ *         description: history created successfully
  *         content:
  *           application/json:
  *             examples:
@@ -98,12 +93,12 @@
  *                 value:
  *                   status: success
  *                   data:
- *                     dictionary_type: inventory_category
- *                     dictionary_name: Check
+ *                     history_type: Add Item
+ *                     history_context: Skincare
  *                     _id: 674342a8b53aabe966070f3d
  *                     createdAt: 2024-11-24T15:13:44.621Z
  *                     updatedAt: 2024-11-24T15:13:44.621Z
- *                   message: dictionary created
+ *                   message: history created
  *       422:
  *         description: Validation failed
  *         content:
@@ -113,22 +108,17 @@
  *                 summary: Character not have valid length
  *                 value:
  *                   status: failed
- *                   message: validation failed dictionary name must be at least 2 characters
+ *                   message: validation failed history context must be at least 2 characters
  *               not-valid-rule:
  *                 summary: Category / Type not available
  *                 value:
  *                   status: failed
- *                   message: validation failed dictionary type must be one of the following values inventory_category, inventory_unit, inventory_room, reminder_type, reminder_context, report_category
+ *                   message: validation failed history type must be one of the following values Add
  *               empty-field:
  *                 summary: Empty field
  *                 value:
  *                   status: failed
- *                   message: validation failed dictionary_name is a required field
- *               conflict-name:
- *                 summary: Name has been used
- *                 value:
- *                   status: failed
- *                   message: dictionary name has been used. try another
+ *                   message: validation failed history_context is a required field
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -143,11 +133,11 @@
 
 /**
  * @swagger
- * /api/v2/dictionary/{id}:
+ * /api/v2/history/{id}:
  *   delete:
- *     summary: Delete dictionary by ID
- *     description: Permanently delete a dictionary entry using its ID. This request is using MongoDB database
- *     tags: [Dictionary]
+ *     summary: Delete history by ID
+ *     description: Permanently delete a history entry using its ID. This request is using MongoDB database
+ *     tags: [history]
  *     parameters:
  *       - name: id
  *         in: path
@@ -155,10 +145,10 @@
  *         schema:
  *           type: string
  *           example: 6737f95df63b4e261fc4151a
- *         description: The unique ID of the dictionary entry to delete
+ *         description: The unique ID of the history entry to delete
  *     responses:
  *       200:
- *         description: Dictionary deleted successfully
+ *         description: history deleted successfully
  *         content:
  *           application/json:
  *             examples:
@@ -168,21 +158,21 @@
  *                   status: success
  *                   data:
  *                     _id: 674342a8b53aabe966070f3d
- *                     dictionary_type: inventory_category
- *                     dictionary_name: Check
+ *                     history_type: Update Item
+ *                     history_context: Skincare
  *                     createdAt: 2024-11-24T15:13:44.621Z
  *                     updatedAt: 2024-11-24T15:13:44.621Z
- *                   message: dictionary deleted
+ *                   message: history deleted
  *       404:
- *         description: Dictionary not found
+ *         description: history not found
  *         content:
  *           application/json:
  *             examples:
  *               not-found:
- *                 summary: Dictionary not found
+ *                 summary: history not found
  *                 value:
  *                   status: failed
- *                   message: dictionary not found
+ *                   message: history not found
  *       422:
  *         description: ID not valid
  *         content:

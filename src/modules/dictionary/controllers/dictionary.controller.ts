@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { create, findAll, isUsedName, hardDelete } from "../services/dictionary.service"
-import { DictionaryPaginationQuery } from "@/utils/interfaces";
+import { DictionaryPaginationQuery } from "../../../utils/interfaces";
 import { res_message_template } from "../../../lang/template.lang";
 import { createValidator, TRequestCreateDictionaryBody } from "../validators/dictionary.validator";
 import * as Yup from "yup";
@@ -53,11 +53,7 @@ export default {
     async findAll(req: Request, res: Response) {
         try {
             // Request : Query
-            const {
-                limit = 12,
-                page = 1,
-                dictionary_type
-            } = req.query as unknown as DictionaryPaginationQuery
+            const { limit = 12, page = 1, dictionary_type } = req.query as unknown as DictionaryPaginationQuery
 
             // Service : Find
             const result = await findAll(limit,page,dictionary_type)

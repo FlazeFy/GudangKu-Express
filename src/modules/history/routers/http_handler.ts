@@ -7,4 +7,6 @@ router.route("/history")
     .get(controller.findAll)
     .post(controller.create);
 
+router.route("/history/:id").delete(controller.deleteById);
+
 export default router;
