@@ -34,7 +34,7 @@ const UserSchema = new Schema<User>(
         },
         telegram_user_id: {
             type: Schema.Types.String,
-            unique: true,
+            required: false,
         },
         telegram_is_valid: {
             type: Schema.Types.Number,
@@ -42,15 +42,12 @@ const UserSchema = new Schema<User>(
         },
         firebase_fcm_token: {
             type: Schema.Types.String,
-            unique: true,
         },
         line_user_id: {
             type: Schema.Types.String,
-            unique: true,
         },
         phone: {
             type: Schema.Types.String,
-            unique: true,
         },
         timezone: {
             type: Schema.Types.String,

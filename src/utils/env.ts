@@ -4,6 +4,7 @@ dotenv.config();
 
 export const DATABASE_URL: string = process.env.DATABASE_URL || "";
 export const SECRET: string = process.env.SECRET || "secret";
+export const TELEGRAM_BOT_TOKEN: string = process.env.TELEGRAM_BOT_TOKEN || "secret";
 
 export const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,

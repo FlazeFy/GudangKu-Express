@@ -14,6 +14,7 @@ const registerSchema = Yup.object().shape({
         [Yup.ref("password"), ""],
         "Your password confirmation is not same"
     ),
+    telegram_user_id: Yup.string()
 });
 
 const loginSchema = Yup.object({
@@ -58,32 +59,28 @@ export default {
     },
     async register(req: IRequestRegister, res: Response) {
         try {
-            const { email, password, username, confirm_password } =
-                req.body;
+            const { email, password, username, confirm_password, telegram_user_id = null } = req.body;
             const telegram_is_valid = 0
 
-            await registerSchema.validate({
-                email,
-                password,
-                username,
-                confirm_password,
-            });
+            await registerSchema.validate({email, password, username, confirm_password, telegram_user_id});
 
-            const user = await register({
-                email,
-                username,
-                password,
-                telegram_is_valid
-            });
+            const user = await register({email, username, password, telegram_is_valid, telegram_user_id});
 
             res.status(200).json({
                 message: "account is registered",
                 data: user,
             });
         } catch (error) {
+            if (error instanceof Yup.ValidationError) {
+                return res.status(422).json({
+                    status: 'failed',
+                    message: prepareYupMsg(error),
+                });
+            }
+
             res.status(500).json({
                 status: 'error',
-                message: "something wrong. please contact admin"
+                message: "something wrong. please contact admin"+error
             }) 
         }
     },

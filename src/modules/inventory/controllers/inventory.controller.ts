@@ -10,6 +10,7 @@ import { prepareYupMsg } from "../../../utils/helpers";
 import { createInventoryValidator, TRequestCreateInventoryBody } from "../validators/inventory.validator";
 import { IRequestWithUser } from "../../../middlewares/auth.middleware";
 import { res_message_template } from "../../../lang/template.lang";
+import { sendTelegramMessage } from "../../../middlewares/telegram.middleware";
 
 const mod = 'inventory' 
 
@@ -41,6 +42,7 @@ export default {
                     if(inventory){
                         // Mailer receipt
                         const user = await me(user_id.toString())
+                        const msg = `You have created called ${inventory.inventory_name}`
                         if(user && user.email){
                             // Render EJS template
                             const templatePath = path.join(__dirname, "../../../mailers/inventory.ejs");
@@ -75,9 +77,13 @@ export default {
                             await sendEmail(
                                 user.email,
                                 "Create Item",
-                                `You have created called ${inventory.inventory_name}`,
+                                msg,
                                 emailHtml
                             );
+                        }
+                        // Middleware : Telegram Chat
+                        if(user && user.telegram_user_id && user.telegram_is_valid == 1){
+                            await sendTelegramMessage(user.telegram_user_id,msg)
                         }
                         res.status(201).json({
                             data: inventory,

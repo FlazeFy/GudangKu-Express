@@ -35,15 +35,11 @@ interface IRegisterPayload {
     username: string;
     password: string;
     telegram_is_valid: number;
+    telegram_user_id: string | null;
 }
 export const register = async (payload: IRegisterPayload): Promise<User> => {
-    const { email,  username, password, telegram_is_valid } = payload;
-    const user = await UserModel.create({
-        email,
-        password,
-        username,
-        telegram_is_valid
-    });
+    const { email,  username, password, telegram_is_valid, telegram_user_id } = payload;
+    const user = await UserModel.create({ email, password, username, telegram_is_valid, telegram_user_id});
 
     return user;
 };
