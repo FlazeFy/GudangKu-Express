@@ -70,3 +70,13 @@ export const findOneDetail = async (user_id:string, id:string): Promise<Inventor
         
     return res
 }
+
+export const isUsedName = async ( inventory_name: string, user_id: string ): Promise<boolean> => {
+    // Query
+    const res = await InventoryModel.findOne({
+        inventory_name: { $regex: `^${inventory_name}$`, $options: "i" },
+        created_by: user_id
+    });
+
+    return res ? true : false
+};

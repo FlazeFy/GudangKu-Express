@@ -22,79 +22,83 @@ export interface Inventory {
     is_favorite: boolean
     is_reminder: boolean
     created_at: Date
-    created_by: string
-    updated_at: Date
+    created_by?: Types.ObjectId
+    updated_at?: Date
     deleted_at?: Date
 }
 
 const inventorySchema = new Schema<Inventory>(
     {
         inventory_name: {
-            type: String,
+            type: Schema.Types.String,
             required: true,
         },
         inventory_category: {
-            type: String,
+            type: Schema.Types.String,
             required: true,
         },
         inventory_desc: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_merk: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_color: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_room: {
-            type: String,
+            type: Schema.Types.String,
             required: true,
         },
         inventory_storage: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_rack: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_price: {
-            type: Number,
+            type: Schema.Types.Number,
             required: true,
         },
         inventory_image: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_unit: {
-            type: String,
+            type: Schema.Types.String,
             required: true,
         },
         inventory_vol: {
-            type: Number,
+            type: Schema.Types.Number,
         },
         inventory_capacity_unit: {
-            type: String,
+            type: Schema.Types.String,
         },
         inventory_capacity_vol: {
-            type: Number,
+            type: Schema.Types.Number,
         },
         is_favorite: {
-            type: Boolean,
+            type: Schema.Types.Boolean,
             required: true,
         },
         is_reminder: {
-            type: Boolean,
+            type: Schema.Types.Boolean,
             required: true,
         },
         created_at: {
-            type: Date,
+            type: Schema.Types.Date,
             required: true,
             default: Date.now,
         },
+        created_by: {
+            type: Schema.Types.ObjectId,
+            ref: "users",
+        },
         updated_at: {
-            type: Date,
+            type: Schema.Types.Date,
             default: Date.now,
         },
         deleted_at: {
-            type: Date,
+            type: Schema.Types.Date,
         },
     },
     {

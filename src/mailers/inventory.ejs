@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Inventory</title>
+        <style>
+            body { font-family: Helvetica; background-color: #f4f4f4; margin: 0; padding: 0; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; }
+            table { border-collapse: collapse; font-size:10px; width:100%; }
+            td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+            th { text-align:center; }
+            .date-text { font-style:italic; font-weight:normal; color:grey; font-size:11px; }
+            tbody tr th { background-color:rgba(59, 131, 246, 0.75); color: white; }
+            .email-container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #DDD; border-radius: 20px; padding: 14px;}
+        </style>
+    </head>
+    <body>
+        <div class="email-container">
+            <div style='text-align:center;'>
+                <h1 style='color:#3b82f6; margin:0;'>GudangKu</h1>
+                <h4 style='color:#212121; margin:0; font-style:italic;'>Smart Inventory, Easy Life</h4><br>
+            </div>
+            <hr>
+            <div class="content">
+                <h3 style='margin:0 0 6px 0;'>Inventory: <%= inventory.inventory_name %></h3>
+                <p style='margin:0; font-size:14px;'>ID: <%= inventory.id %></p>
+                <p style='margin-top:0; font-size:14px;'>Category: <%= inventory.inventory_category %></p>
+                <p style='font-size:13px; text-align: justify;'>
+                    At <%= datetime %>, this document has been created from the inventory called <b><%= inventory.inventory_name %></b>. 
+                    You can also import this document into GudangKu Apps or send it to our Telegram Bot if you wish to analyze the inventory.
+                    Important to know, that this document is <b>accessible for everyone</b> by using this link. Here you can see the item in this report:
+                </p>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Description</th>
+                            <td><%= dt.inventory_desc ? dt.inventory_desc : '-' %></td>
+                        </tr>
+                        <tr>
+                            <th>Merk</th>
+                            <td><%= dt.inventory_merk ? dt.inventory_merk : '-' %></td>
+                        </tr>
+                        <tr>
+                            <th>Room</th>
+                            <td><%= dt.inventory_room %></td>
+                        </tr>
+                        <tr>
+                            <th>Storage</th>
+                            <td><%= dt.inventory_storage ? dt.inventory_storage : '-' %></td>
+                        </tr>
+                        <tr>
+                            <th>Rack</th>
+                            <td><%= dt.inventory_rack ? dt.inventory_rack : '-' %></td>
+                        </tr>
+                        <tr>
+                            <th>Price</th>
+                            <td>Rp. <%= Number(dt.inventory_price).toLocaleString() %></td>
+                        </tr>
+                        <tr>
+                            <th>Unit</th>
+                            <td><%= dt.inventory_unit %></td>
+                        </tr>
+                        <tr>
+                            <th>Volume</th>
+                            <td><%= dt.inventory_vol ? dt.inventory_vol : '-' %></td>
+                        </tr>
+                        <tr>
+                            <th>Capacity Unit</th>
+                            <td><%= dt.inventory_capacity %></td>
+                        </tr>
+                        <tr>
+                            <th>Is Favorite</th>
+                            <td><%= is_favorite %></td>
+                        </tr>
+                        <%= img %>
+                    </tbody>
+                </table><br>
+            </div>
+            <br><hr>
+            <div>
+                <h6 class='date-text' style='margin: 0;'>Parts of FlazenApps</h6>
+                <h6 class='date-text' style='margin: 0; float:right; margin-top:-12px;'>Generated at <%= datetime %> by <span style='color:#3b82f6;'>https://gudangku.leonardhors.com</span></h6>
+            </div>
+        </div>
+    </body>
+</html>

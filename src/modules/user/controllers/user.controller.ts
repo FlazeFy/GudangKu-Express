@@ -4,7 +4,7 @@ import { IRequestWithUser } from "../../../middlewares/auth.middleware";
 import * as Yup from "yup";
 import { login, register, updateProfile } from "../services/user.service";
 import { ObjectId } from "mongoose";
-import { error } from "console";
+import { prepareYupMsg } from "../../../utils/helpers";
 
 const registerSchema = Yup.object().shape({
     username: Yup.string().required(),
@@ -43,6 +43,13 @@ export default {
                 data: token,
             });
         } catch (error) {
+            if (error instanceof Yup.ValidationError) {
+                return res.status(422).json({
+                    status: 'failed',
+                    message: prepareYupMsg(error),
+                });
+            }
+
             res.status(500).json({
                 status: 'error',
                 message: "something wrong. please contact admin"
