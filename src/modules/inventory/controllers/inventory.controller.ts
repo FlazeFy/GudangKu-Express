@@ -11,6 +11,7 @@ import { createInventoryValidator, TRequestCreateInventoryBody } from "../valida
 import { IRequestWithUser } from "../../../middlewares/auth.middleware";
 import { res_message_template } from "../../../lang/template.lang";
 import { sendTelegramMessage } from "../../../middlewares/telegram.middleware";
+import { generatePDF } from "../../../utils/generator";
 
 const mod = 'inventory' 
 
@@ -18,85 +19,98 @@ export default {
     async postInventory(req: IRequestWithUser, res: Response) {
         try {
             const user_id = req.user?.id;
-            if(user_id === undefined){
-                res.status(401).json({
+            if (!user_id) {
+                return res.status(401).json({
                     data: null,
                     message: "Unauthorized",
                 });
-            } else {
-                // Validator
-                await createInventoryValidator.validate(req.body, { abortEarly: false })
-                const { inventory_name } = req.body as TRequestCreateInventoryBody
-
-                // Service: Check name inventory name avaiability
-                const isUsed = await isUsedName(inventory_name, user_id.toString())
-                
-                if(isUsed){
-                    res.status(409).json({
-                        status: 'failed',
-                        message: `${mod} name ${res_message_template.conflict}`,
-                    });
-                } else {
-                    const inventory = await create(req.body)
-
-                    if(inventory){
-                        // Mailer receipt
-                        const user = await me(user_id.toString())
-                        const msg = `You have created called ${inventory.inventory_name}`
-                        if(user && user.email){
-                            // Render EJS template
-                            const templatePath = path.join(__dirname, "../../../mailers/inventory.ejs");
-
-                            const emailHtml = await ejs.renderFile(templatePath, {
-                                inventory: {
-                                    inventory_name: inventory.inventory_name,
-                                    id: inventory._id,
-                                    inventory_category: inventory.inventory_category
-                                },
-                                datetime: inventory.created_at,
-                                dt: {
-                                    inventory_desc: inventory.inventory_desc ?? '-',
-                                    inventory_merk: inventory.inventory_merk ?? '-',
-                                    inventory_room: inventory.inventory_room,
-                                    inventory_storage: inventory.inventory_storage ?? '-',
-                                    inventory_rack: inventory.inventory_rack ?? '-',
-                                    inventory_price: inventory.inventory_price,
-                                    inventory_unit: inventory.inventory_unit,
-                                    inventory_vol: inventory.inventory_vol,
-                                    inventory_capacity: `${inventory.inventory_capacity_vol ?? '-'} ${inventory.inventory_capacity_unit ?? '-'}`
-                                },
-                                is_favorite: inventory.is_favorite,
-                                img: `
-                                <tr>
-                                    <th>Image</th>
-                                    <td>${inventory.inventory_image ? `<img src='${inventory.inventory_image}' alt='${inventory.inventory_image}'/>`:'-'}</td>
-                                </tr>`
-                            });
-
-                            // Send Email
-                            await sendEmail(
-                                user.email,
-                                "Create Item",
-                                msg,
-                                emailHtml
-                            );
-                        }
-                        // Middleware : Telegram Chat
-                        if(user && user.telegram_user_id && user.telegram_is_valid == 1){
-                            await sendTelegramMessage(user.telegram_user_id,msg)
-                        }
-                        res.status(201).json({
-                            data: inventory,
-                            message: "Success create inventory",
-                        });
-                    } else {
-                        res.status(500).json({
-                            data: null,
-                            message: "Failed create inventory",
-                        });
-                    }
-                }
             }
+    
+            // Validator
+            await createInventoryValidator.validate(req.body, { abortEarly: false });
+            const { inventory_name } = req.body as TRequestCreateInventoryBody;
+    
+            // Service: Check inventory name availability
+            const isUsed = await isUsedName(inventory_name, user_id.toString());
+            if (isUsed) {
+                return res.status(409).json({
+                    status: 'failed',
+                    message: `${mod} name ${res_message_template.conflict}`,
+                });
+            }
+    
+            const inventory = await create(req.body);
+    
+            if (!inventory) {
+                return res.status(500).json({
+                    data: null,
+                    message: "Failed to create inventory",
+                });
+            }
+    
+            // Mailer and Telegram notification
+            const user = await me(user_id.toString());
+            const msg = `You have created an inventory called ${inventory.inventory_name}`;
+            
+            // Template EJS
+            const sharedEjsData = {
+                inventory: {
+                    inventory_name: inventory.inventory_name,
+                    id: inventory._id,
+                    inventory_category: inventory.inventory_category,
+                },
+                datetime: inventory.created_at,
+                dt: {
+                    inventory_desc: inventory.inventory_desc ?? '-',
+                    inventory_merk: inventory.inventory_merk ?? '-',
+                    inventory_room: inventory.inventory_room,
+                    inventory_storage: inventory.inventory_storage ?? '-',
+                    inventory_rack: inventory.inventory_rack ?? '-',
+                    inventory_price: inventory.inventory_price,
+                    inventory_unit: inventory.inventory_unit,
+                    inventory_vol: inventory.inventory_vol,
+                    inventory_capacity: `${inventory.inventory_capacity_vol ?? '-'} ${inventory.inventory_capacity_unit ?? '-'}`,
+                },
+                is_favorite: inventory.is_favorite,
+                img: `
+                    <tr>
+                        <th>Image</th>
+                        <td>${inventory.inventory_image ? `<img src='${inventory.inventory_image}' alt='${inventory.inventory_image}'/>` : '-'}</td>
+                    </tr>`,
+            };
+    
+            if (user?.email) {
+                const emailTemplatePath = path.join(__dirname, "../../../mailers/inventory.ejs");
+                const emailHtml = await ejs.renderFile(emailTemplatePath, {
+                    ...sharedEjsData,
+                    type_template: 'email',
+                });
+    
+                await sendEmail(user.email, "Create Item", msg, emailHtml);
+            }
+    
+            if (user?.telegram_user_id && user.telegram_is_valid === 1) {
+                const pdfTemplatePath = path.join(__dirname, "../../../mailers/inventory.ejs");
+                const pdfHtml = await ejs.renderFile(pdfTemplatePath, {
+                    ...sharedEjsData,
+                    type_template: 'pdf',
+                });
+    
+                const pdfPath = path.join(__dirname, `../../../temp/inventory_${inventory._id}.pdf`);
+                await generatePDF(pdfHtml, pdfPath)
+    
+                await sendTelegramMessage({
+                    user_tele_id: user.telegram_user_id,
+                    message: msg,
+                    filePath: pdfPath,
+                    fileType: "document",
+                });
+            }
+    
+            res.status(201).json({
+                data: inventory,
+                message: "Success create inventory",
+            });
         } catch (error) {
             if (error instanceof Yup.ValidationError) {
                 return res.status(422).json({
@@ -104,13 +118,13 @@ export default {
                     message: prepareYupMsg(error),
                 });
             }
-
+    
             res.status(500).json({
                 status: 'error',
-                message: "something wrong. please contact admin"+error 
-            }) 
+                message: "Something went wrong. Please contact admin. " + error,
+            });
         }
-    },
+    },    
     async getTotalInventoryCategoryStats(req: Request, res: Response) {
         try {
             const { type } = req.params

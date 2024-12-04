@@ -14,7 +14,10 @@ const registerSchema = Yup.object().shape({
         [Yup.ref("password"), ""],
         "Your password confirmation is not same"
     ),
-    telegram_user_id: Yup.string()
+    telegram_user_id: Yup.string().nullable(), 
+    firebase_fcm_token: Yup.string().nullable(), 
+    line_user_id: Yup.string().nullable(),
+    phone: Yup.string().nullable()
 });
 
 const loginSchema = Yup.object({
@@ -59,12 +62,12 @@ export default {
     },
     async register(req: IRequestRegister, res: Response) {
         try {
-            const { email, password, username, confirm_password, telegram_user_id = null } = req.body;
+            const { email, password, username, confirm_password, telegram_user_id = null, firebase_fcm_token = null, line_user_id = null } = req.body;
             const telegram_is_valid = 0
 
-            await registerSchema.validate({email, password, username, confirm_password, telegram_user_id});
+            await registerSchema.validate({email, password, username, confirm_password, telegram_user_id, firebase_fcm_token, line_user_id});
 
-            const user = await register({email, username, password, telegram_is_valid, telegram_user_id});
+            const user = await register({email, username, password, telegram_is_valid, telegram_user_id, firebase_fcm_token, line_user_id});
 
             res.status(200).json({
                 message: "account is registered",

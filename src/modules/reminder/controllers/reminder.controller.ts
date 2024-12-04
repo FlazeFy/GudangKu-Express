@@ -31,7 +31,10 @@ export default {
                         const user = await me(user_id.toString())
                         if(user && user.telegram_user_id && user.telegram_is_valid == 1){
                             const msg = `You have create a reminder. Here's the reminder description for [DEMO], ${req.body.reminder_desc}` 
-                            await sendTelegramMessage(user.telegram_user_id,msg)
+                            await sendTelegramMessage({
+                                user_tele_id: user.telegram_user_id,
+                                message: msg,
+                            })
                         }
                     }
                     res.status(201).json({

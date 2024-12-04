@@ -7,6 +7,15 @@ interface ILoginPayload {
   email: string;
   password: string;
 }
+interface IRegisterPayload {
+    email: string;
+    username: string;
+    password: string;
+    telegram_is_valid: number;
+    telegram_user_id: string | null;
+    firebase_fcm_token: string | null;
+    line_user_id: string | null;
+}
 
 export const login = async (payload: ILoginPayload): Promise<string> => {
     const { email, password } = payload;
@@ -30,16 +39,8 @@ export const login = async (payload: ILoginPayload): Promise<string> => {
     return token;
 };
 
-interface IRegisterPayload {
-    email: string;
-    username: string;
-    password: string;
-    telegram_is_valid: number;
-    telegram_user_id: string | null;
-}
 export const register = async (payload: IRegisterPayload): Promise<User> => {
-    const { email,  username, password, telegram_is_valid, telegram_user_id } = payload;
-    const user = await UserModel.create({ email, password, username, telegram_is_valid, telegram_user_id});
+    const user = await UserModel.create(payload);
 
     return user;
 };

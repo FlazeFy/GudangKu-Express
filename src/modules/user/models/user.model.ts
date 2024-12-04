@@ -1,6 +1,8 @@
 import { encrypt } from "../../../utils/encryption"
 import mongoose from "mongoose";
 
+const Schema = mongoose.Schema;
+
 export interface User {
   username: string;
   email: string;
@@ -13,8 +15,6 @@ export interface User {
   timezone?: string;
   createdAt?: string;
 }
-
-const Schema = mongoose.Schema;
 
 const UserSchema = new Schema<User>(
     {
@@ -35,6 +35,9 @@ const UserSchema = new Schema<User>(
         telegram_user_id: {
             type: Schema.Types.String,
             required: false,
+            default: null,
+            unique: true, 
+            sparse: true,
         },
         telegram_is_valid: {
             type: Schema.Types.Number,
@@ -42,15 +45,28 @@ const UserSchema = new Schema<User>(
         },
         firebase_fcm_token: {
             type: Schema.Types.String,
+            required: false,
+            default: null,
+            unique: true, 
+            sparse: true,
         },
         line_user_id: {
             type: Schema.Types.String,
+            required: false,
+            default: null,
+            unique: true, 
+            sparse: true,
         },
         phone: {
             type: Schema.Types.String,
+            required: false,
+            default: null,
+            unique: true, 
+            sparse: true,
         },
         timezone: {
             type: Schema.Types.String,
+            required:false
         },
     },
     {
